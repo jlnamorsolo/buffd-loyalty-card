@@ -1,1 +1,0 @@
-# buffd-loyalty-card
