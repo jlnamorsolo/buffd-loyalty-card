@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Buffd — Digital Loyalty & Retention for Nail Studios</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cormorant Garamond (Editorial Serif) & Plus Jakarta Sans (Clean Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- QR Code Generator Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for Reward & Stamp Celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory: '#FAF7F2',
+            cream: '#F2ECE1',
+            charcoal: '#1E1E1C',
+            muted: '#6E6B64',
+            sage: '#7A8F7E',
+            champagne: '#C6A87C',
+            blush: '#C88A7B',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 30px -10px rgba(30, 30, 28, 0.08)',
+            'card': '0 20px 45px -15px rgba(30, 30, 28, 0.14)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --accent-primary: #7A8F7E;
+      --accent-secondary: #C6A87C;
+    }
+
+    body {
+      background-color: #EFECE6;
+      color: #1E1E1C;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+    }
+
+    .font-editorial {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    /* Custom Accent Dynamic Utilities */
+    .bg-accent {
+      background-color: var(--accent-primary);
+    }
+    .text-accent {
+      color: var(--accent-primary);
+    }
+    .border-accent {
+      border-color: var(--accent-primary);
+    }
+
+    /* Stamp Pop Animation */
+    @keyframes stampPop {
+      0% { transform: scale(0.35) rotate(-18deg); opacity: 0; }
+      65% { transform: scale(1.16) rotate(4deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .animate-stamp-pop {
+      animation: stampPop 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Subtle Shimmer on Luxury Loyalty Card */
+    .card-shimmer {
+      background: linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 45%, rgba(198,168,124,0.12) 100%);
+    }
+
+    /* Scanner Laser Animation */
+    @keyframes scanLaser {
+      0%, 100% { top: 12%; }
+      50% { top: 84%; }
+    }
+    .scanner-line {
+      animation: scanLaser 2.2s ease-in-out infinite;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(30, 30, 28, 0.16);
+      border-radius: 9999px;
+    }
+
+    /* Print Styles for Desk Stand */
+    @media print {
+      body * { visibility: hidden; }
+      #printable-stand-area, #printable-stand-area * { visibility: visible; }
+      #printable-stand-area {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start">
+
+  <!-- TOP DEMO ROUTE & LIVE SYNC BAR (Helps test all 3 views seamlessly) -->
+  <header class="w-full bg-charcoal text-ivory sticky top-0 z-40 border-b border-white/10 shadow-md">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-champagne/20 border border-champagne/50 flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-champagne" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z"/>
+          </svg>
+        </div>
+        <span class="font-editorial text-xl font-semibold tracking-wide">Buffd</span>
+        <span class="hidden sm:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/10 text-champagne">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live Sync
+        </span>
+      </div>
+
+      <!-- Simulated Route Switcher -->
+      <nav class="flex items-center bg-white/10 p-1 rounded-xl text-xs font-medium">
+        <button onclick="switchRoute('admin')" id="nav-admin" class="route-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Salon Admin</span>
+        </button>
+        <button onclick="switchRoute('join')" id="nav-join" class="route-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+          <span>Join QR</span>
+        </button>
+        <button onclick="switchRoute('card')" id="nav-card" class="route-tab px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Client Card</span>
+        </button>
+      </nav>
+
+      <!-- Active Client Quick Switcher (visible on Card view or desktop) -->
+      <div class="flex items-center gap-2">
+        <select id="quick-client-select" onchange="selectClientFromDropdown(this.value)" aria-label="Select demo client"
+          class="bg-white/10 text-ivory text-xs rounded-lg px-2.5 py-1.5 border border-white/15 focus:outline-none focus:border-champagne cursor-pointer">
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none w-full max-w-sm px-4"></div>
+
+  <!-- MAIN APP SHELL (Mobile-First Container) -->
+  <main class="w-full max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8 flex-1 flex flex-col items-center">
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 1: SALON ADMIN / NAIL TECH DASHBOARD (/admin)                    -->
+    <!-- ===================================================================== -->
+    <section id="view-admin" class="w-full hidden">
+      <!-- Auth Gate (Shown only when user clicks Sign Out) -->
+      <div id="admin-auth-box" class="hidden max-w-md mx-auto bg-ivory rounded-3xl p-6 sm:p-8 shadow-card border border-charcoal/10 mt-4">
+        <div class="text-center mb-6">
+          <span class="inline-block text-xs uppercase tracking-[0.2em] text-champagne font-semibold mb-1">Nail Tech Portal</span>
+          <h1 class="font-editorial text-3xl font-semibold text-charcoal">Welcome to Buffd</h1>
+          <p class="text-sm text-muted mt-1">Sign in to manage loyalty cards & client retention.</p>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">Studio Email</label>
+            <input type="email" id="login-email" required value="hello@ateliercuticle.ph"
+              class="w-full px-4 py-3 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-muted mb-1.5">Password</label>
+            <input type="password" id="login-password" required value="nailartist123"
+              class="w-full px-4 py-3 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+          </div>
+          <button type="submit" class="w-full py-3.5 rounded-xl bg-charcoal text-ivory font-semibold text-sm hover:bg-charcoal/90 transition shadow-soft">
+            Sign In to Studio Dashboard
+          </button>
+        </form>
+        <p class="text-center text-xs text-muted mt-4">Demo credentials pre-filled for instant access.</p>
+      </div>
+
+      <!-- Logged-In Admin Workspace -->
+      <div id="admin-workspace" class="space-y-6">
+        <!-- Studio Header Banner -->
+        <div class="bg-ivory rounded-3xl p-5 sm:p-7 shadow-soft border border-charcoal/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div id="admin-salon-badge" class="w-14 h-14 rounded-2xl bg-accent text-white flex items-center justify-center font-editorial text-2xl font-bold shadow-sm shrink-0">
+              AC
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h1 id="admin-salon-title" class="font-editorial text-2xl sm:text-3xl font-semibold text-charcoal leading-tight">Atelier Cuticle Studio</h1>
+                <span class="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-900/10 text-emerald-800">Active Plan</span>
+              </div>
+              <p class="text-xs sm:text-sm text-muted mt-0.5">
+                Staff PIN: <strong id="admin-display-pin" class="text-charcoal font-mono bg-cream px-1.5 py-0.5 rounded">1234</strong>
+                &bull; Goal: <strong id="admin-display-target" class="text-charcoal">6</strong> stamps
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2.5 self-start sm:self-center">
+            <button onclick="openScannerModal()" class="px-4 py-3 rounded-xl bg-accent text-white font-semibold text-sm flex items-center gap-2 shadow-soft hover:opacity-95 active:scale-[0.99] transition">
+              <i data-lucide="scan-line" class="w-4 h-4"></i>
+              <span>Scan Client Card</span>
+            </button>
+            <button onclick="toggleAdminAuth(false)" title="Sign Out" class="p-3 rounded-xl bg-cream text-charcoal/70 hover:text-charcoal transition">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick KPI Strip -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-4">
+          <div class="bg-ivory rounded-2xl p-4 border border-charcoal/5 shadow-soft">
+            <span class="text-[11px] uppercase tracking-wider text-muted font-semibold">VIP Clients</span>
+            <p id="stat-total-clients" class="font-editorial text-2xl sm:text-3xl font-bold text-charcoal mt-1">3</p>
+          </div>
+          <div class="bg-ivory rounded-2xl p-4 border border-charcoal/5 shadow-soft">
+            <span class="text-[11px] uppercase tracking-wider text-muted font-semibold">Stamps Issued</span>
+            <p id="stat-total-stamps" class="font-editorial text-2xl sm:text-3xl font-bold text-charcoal mt-1">13</p>
+          </div>
+          <div class="bg-ivory rounded-2xl p-4 border border-charcoal/5 shadow-soft">
+            <span class="text-[11px] uppercase tracking-wider text-muted font-semibold">Rewards Ready</span>
+            <p id="stat-rewards-ready" class="font-editorial text-2xl sm:text-3xl font-bold text-champagne mt-1">1</p>
+          </div>
+        </div>
+
+        <!-- Two-Column Layout: Left = Client Directory, Right = Desk QR & Studio Settings -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+          <!-- CLIENT DIRECTORY (7 cols on lg) -->
+          <div class="lg:col-span-7 bg-ivory rounded-3xl p-5 sm:p-6 shadow-soft border border-charcoal/5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 class="font-editorial text-2xl font-semibold text-charcoal">Client Loyalty Directory</h2>
+                <p class="text-xs text-muted">Tap +1 Stamp after service or inspect a client's live card.</p>
+              </div>
+              <button onclick="switchRoute('join')" class="text-xs font-semibold text-accent hover:underline flex items-center gap-1 self-start sm:self-auto">
+                <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> + Register New Client
+              </button>
+            </div>
+
+            <!-- Search Input -->
+            <div class="relative">
+              <i data-lucide="search" class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+              <input type="text" id="client-search-input" oninput="renderClientDirectory()" placeholder="Search client name or card code..."
+                class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-charcoal/10 text-sm focus:outline-none focus:border-charcoal" />
+            </div>
+
+            <!-- Client Cards List -->
+            <div id="admin-client-list" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- DESK QR CODE & STUDIO SETTINGS (5 cols on lg) -->
+          <div class="lg:col-span-5 space-y-6">
+
+            <!-- Salon Sign-Up QR Generator Card -->
+            <div class="bg-ivory rounded-3xl p-5 sm:p-6 shadow-soft border border-charcoal/5">
+              <div class="flex items-start justify-between gap-2 mb-4">
+                <div>
+                  <span class="text-[11px] uppercase tracking-widest text-champagne font-semibold">Desk Onboarding</span>
+                  <h2 class="font-editorial text-2xl font-semibold text-charcoal">Salon Sign-Up QR</h2>
+                </div>
+                <button onclick="openPrintStandModal()" class="px-3 py-1.5 rounded-xl bg-cream hover:bg-charcoal hover:text-ivory text-xs font-semibold flex items-center gap-1.5 transition">
+                  <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Stand
+                </button>
+              </div>
+
+              <div class="bg-white rounded-2xl p-4 border border-charcoal/10 flex flex-col items-center text-center">
+                <div id="admin-salon-qr" class="p-2 bg-white rounded-xl"></div>
+                <p class="text-xs text-muted mt-2 max-w-[230px]">
+                  Clients scan this at your nail desk to create their card & claim Stamp #1 in 10 seconds.
+                </p>
+                <div class="mt-3 flex items-center gap-2 w-full">
+                  <button onclick="switchRoute('join')" class="flex-1 py-2.5 px-3 rounded-xl bg-charcoal text-ivory text-xs font-semibold hover:opacity-90 transition">
+                    Test Join Page
+                  </button>
+                  <button onclick="copyJoinLink()" class="py-2.5 px-3 rounded-xl bg-cream text-charcoal text-xs font-semibold hover:bg-cream/80 transition flex items-center gap-1">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy URL
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Salon Settings Form -->
+            <div class="bg-ivory rounded-3xl p-5 sm:p-6 shadow-soft border border-charcoal/5">
+              <h2 class="font-editorial text-2xl font-semibold text-charcoal mb-1">Studio Settings</h2>
+              <p class="text-xs text-muted mb-4">Changes update all client cards immediately.</p>
+
+              <form onsubmit="saveSalonSettings(event)" class="space-y-3.5">
+                <div>
+                  <label class="block text-xs font-semibold text-charcoal mb-1">Salon / Studio Name</label>
+                  <input type="text" id="set-salon-name" required
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+                </div>
+
+                <!-- Accent Color Swatches -->
+                <div>
+                  <label class="block text-xs font-semibold text-charcoal mb-1.5">Card Accent Color</label>
+                  <div class="flex items-center gap-2.5" id="accent-swatches">
+                    <button type="button" data-color="#7A8F7E" onclick="selectAccentSwatch('#7A8F7E')" class="swatch-btn w-8 h-8 rounded-full bg-[#7A8F7E] ring-2 ring-offset-2 ring-charcoal transition" title="Muted Sage"></button>
+                    <button type="button" data-color="#C6A87C" onclick="selectAccentSwatch('#C6A87C')" class="swatch-btn w-8 h-8 rounded-full bg-[#C6A87C] transition" title="Champagne Gold"></button>
+                    <button type="button" data-color="#C88A7B" onclick="selectAccentSwatch('#C88A7B')" class="swatch-btn w-8 h-8 rounded-full bg-[#C88A7B] transition" title="Terracotta Blush"></button>
+                    <button type="button" data-color="#1E1E1C" onclick="selectAccentSwatch('#1E1E1C')" class="swatch-btn w-8 h-8 rounded-full bg-[#1E1E1C] transition" title="Editorial Obsidian"></button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-charcoal mb-1">Stamps Goal (4–12)</label>
+                    <input type="number" id="set-target-stamps" min="4" max="12" required
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-charcoal mb-1">4-Digit Staff PIN</label>
+                    <input type="text" id="set-staff-pin" pattern="\d{4}" maxlength="4" required
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/15 text-sm font-mono focus:outline-none focus:border-charcoal" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-charcoal mb-1">Reward Description</label>
+                  <input type="text" id="set-reward-title" required
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-charcoal mb-1">Rebooking Link (IG / WhatsApp / Fresha)</label>
+                  <input type="url" id="set-booking-url" required
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/15 text-sm focus:outline-none focus:border-charcoal" />
+                </div>
+
+                <button type="submit" class="w-full py-3 rounded-xl bg-charcoal text-ivory font-semibold text-sm hover:opacity-90 transition shadow-soft">
+                  Save Studio Settings
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 2: QUICK CLIENT REGISTRATION PAGE (/join/[salon_id])             -->
+    <!-- ===================================================================== -->
+    <section id="view-join" class="w-full max-w-md mx-auto hidden">
+      <div class="bg-ivory rounded-[32px] p-6 sm:p-8 shadow-card border border-charcoal/10 relative overflow-hidden">
+        <!-- Decorative Top Accent Strip -->
+        <div class="h-1.5 w-full bg-accent absolute top-0 left-0"></div>
+
+        <!-- Salon Header -->
+        <div class="text-center pt-2 pb-6 border-b border-charcoal/10">
+          <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-champagne font-semibold mb-2">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> VIP Nail & Skin Rewards
+          </span>
+          <h1 id="join-salon-name" class="font-editorial text-3xl sm:text-4xl font-semibold text-charcoal">Atelier Cuticle Studio</h1>
+          <p class="text-xs sm:text-sm text-muted mt-2 leading-relaxed">
+            Create your digital loyalty pass in seconds and receive <strong class="text-charcoal">Stamp #1</strong> for today's visit.
+          </p>
+        </div>
+
+        <!-- Reward Teaser Pill -->
+        <div class="my-5 bg-cream/80 border border-champagne/30 rounded-2xl p-3.5 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-champagne/20 text-charcoal flex items-center justify-center shrink-0">
+            <i data-lucide="gift" class="w-5 h-5 text-champagne"></i>
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wider font-semibold text-muted">Unlock at <span id="join-target-count">6</span> Visits</p>
+            <p id="join-reward-preview" class="text-xs sm:text-sm font-semibold text-charcoal leading-snug">Free Luxury Paraffin Hand Mask or 20% Off Russian Manicure</p>
+          </div>
+        </div>
+
+        <!-- Ultra-Fast 2-Field Form -->
+        <form onsubmit="handleQuickRegister(event)" class="space-y-4">
+          <div>
+            <label for="join-client-name" class="block text-xs font-semibold uppercase tracking-wider text-charcoal mb-1.5">
+              1. Your Full Name
+            </label>
+            <input type="text" id="join-client-name" required placeholder="e.g., Camille Santos" autocomplete="name"
+              class="w-full px-4 py-3.5 rounded-2xl bg-white border border-charcoal/15 text-base text-charcoal placeholder:text-muted/50 focus:outline-none focus:border-charcoal transition" />
+          </div>
+
+          <div>
+            <label for="join-appointment-date" class="block text-xs font-semibold uppercase tracking-wider text-charcoal mb-1.5">
+              2. Appointment Date
+            </label>
+            <input type="date" id="join-appointment-date" required
+              class="w-full px-4 py-3.5 rounded-2xl bg-white border border-charcoal/15 text-base text-charcoal focus:outline-none focus:border-charcoal transition" />
+          </div>
+
+          <button type="submit" class="w-full py-4 rounded-2xl bg-accent text-white font-semibold text-base shadow-soft hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2 mt-2">
+            <span>Create My Loyalty Card</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+        <p class="text-center text-[11px] text-muted mt-5">
+          No app download or password needed. Powered by <strong class="text-charcoal">Buffd</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VIEW 3: CLIENT DIGITAL LOYALTY CARD (/card/[unique_client_slug])      -->
+    <!-- ===================================================================== -->
+    <section id="view-card" class="w-full max-w-md mx-auto hidden pb-24">
+
+      <!-- Dismissible Add to Home Screen Banner -->
+      <div id="a2hs-banner" class="mb-3 bg-charcoal text-ivory rounded-2xl px-4 py-3 flex items-center justify-between gap-3 shadow-soft">
+        <div class="flex items-center gap-2.5 text-xs">
+          <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+            <i data-lucide="share" class="w-3.5 h-3.5 text-champagne"></i>
+          </div>
+          <p class="leading-snug">
+            Tap <strong>Share &rarr; Add to Home Screen</strong> to save your Buffd VIP card.
+          </p>
+        </div>
+        <button onclick="dismissA2HS()" aria-label="Dismiss banner" class="text-ivory/60 hover:text-ivory p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Luxury Digital Loyalty Card Container -->
+      <div class="bg-ivory rounded-[32px] shadow-card border border-charcoal/10 overflow-hidden relative card-shimmer">
+        <!-- Top Brand Header -->
+        <div class="bg-accent text-white px-6 pt-6 pb-7 relative">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] uppercase tracking-[0.22em] text-white/85 font-semibold">Digital VIP Pass</span>
+            <span id="card-slug-badge" class="text-[11px] font-mono bg-black/20 px-2.5 py-0.5 rounded-full text-white/90">#camille-4821</span>
+          </div>
+          <h1 id="card-salon-name" class="font-editorial text-2xl sm:text-3xl font-semibold mt-1 tracking-wide">Atelier Cuticle Studio</h1>
+          <div class="mt-4 pt-4 border-t border-white/20 flex items-end justify-between">
+            <div>
+              <p class="text-xs text-white/80">Member</p>
+              <p id="card-client-greeting" class="font-editorial text-2xl font-semibold leading-tight">Hi, Camille Santos</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[11px] uppercase tracking-wider text-white/80">Progress</p>
+              <p id="card-progress-text" class="text-lg font-bold">5 / 6 Stamps</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reward Unlocked Celebratory Banner (Shown when stamps >= target) -->
+        <div id="reward-unlocked-banner" class="hidden bg-gradient-to-r from-[#C6A87C] via-[#D8BE96] to-[#C6A87C] text-charcoal px-6 py-4 flex items-center justify-between gap-3 border-b border-charcoal/10">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-charcoal text-champagne flex items-center justify-center shrink-0 shadow-sm">
+              <i data-lucide="award" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="font-editorial text-xl font-bold leading-none">Reward Unlocked!</p>
+              <p class="text-xs font-medium text-charcoal/85 mt-0.5">Show this card at checkout to redeem.</p>
+            </div>
+          </div>
+          <button onclick="openPinModal('redeem')" class="px-3 py-1.5 rounded-xl bg-charcoal text-ivory text-xs font-semibold shrink-0 hover:opacity-90 transition">
+            Redeem
+          </button>
+        </div>
+
+        <!-- Card Body -->
+        <div class="p-6 space-y-6">
+          <!-- Visual Stamp Grid -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-semibold uppercase tracking-wider text-muted">Your Loyalty Stamps</span>
+              <span id="card-lifetime-visits" class="text-xs text-muted">Lifetime Visits: 5</span>
+            </div>
+            <div id="card-stamp-grid" class="grid grid-cols-3 gap-3">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Reward Description Box -->
+          <div class="bg-cream/90 rounded-2xl p-4 border border-charcoal/5 flex items-start gap-3">
+            <div class="w-8 h-8 rounded-xl bg-champagne/25 flex items-center justify-center shrink-0 mt-0.5">
+              <i data-lucide="sparkles" class="w-4 h-4 text-champagne"></i>
+            </div>
+            <div>
+              <p class="text-[11px] uppercase tracking-wider font-semibold text-muted">Completed Card Reward</p>
+              <p id="card-reward-title" class="text-sm font-semibold text-charcoal mt-0.5 leading-snug">
+                Free Luxury Paraffin Hand Mask or 20% Off Russian Manicure
+              </p>
+            </div>
+          </div>
+
+          <!-- Appointment & 21-Day Fill Dates -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-2xl p-3.5 border border-charcoal/10">
+              <span class="text-[10px] uppercase tracking-wider font-semibold text-muted block">Last Visit</span>
+              <span id="card-last-visit" class="text-sm font-bold text-charcoal mt-0.5 block">Nov 02, 2026</span>
+            </div>
+            <div class="bg-white rounded-2xl p-3.5 border border-champagne/50 relative">
+              <span class="text-[10px] uppercase tracking-wider font-semibold text-champagne block">Next 3-Week Fill</span>
+              <span id="card-next-fill" class="text-sm font-bold text-charcoal mt-0.5 block">Nov 23, 2026</span>
+            </div>
+          </div>
+
+          <!-- Unique Client Personal QR Code -->
+          <div class="bg-white rounded-2xl p-4 border border-charcoal/10 flex flex-col items-center text-center">
+            <div id="client-personal-qr" class="p-2 bg-white"></div>
+            <p class="text-xs font-semibold text-charcoal mt-2">Present at Checkout to Stamp</p>
+            <p id="client-qr-caption" class="text-[11px] text-muted font-mono mt-0.5">ID: camille-4821</p>
+          </div>
+
+          <!-- Subtle Staff PIN Fallback Trigger -->
+          <div class="pt-1 flex items-center justify-between border-t border-charcoal/10">
+            <button onclick="openPinModal('stamp')" class="text-xs font-medium text-muted hover:text-charcoal transition flex items-center gap-1.5 py-1">
+              <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+              <span>Add Stamp (Staff Only)</span>
+            </button>
+            <button onclick="toggleHistoryDrawer()" class="text-xs font-medium text-muted hover:text-charcoal transition flex items-center gap-1 py-1">
+              <i data-lucide="history" class="w-3.5 h-3.5"></i>
+              <span>Visit Log</span>
+            </button>
+          </div>
+
+          <!-- Collapsible Visit History -->
+          <div id="client-history-drawer" class="hidden bg-cream/60 rounded-2xl p-3.5 space-y-2 max-h-40 overflow-y-auto">
+            <p class="text-[11px] uppercase tracking-wider font-semibold text-muted">Stamp History</p>
+            <div id="client-history-list" class="space-y-1.5 text-xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Bottom Action Bar -->
+      <div class="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-md border-t border-charcoal/10 px-4 py-3 z-30">
+        <div class="max-w-md mx-auto flex items-center gap-3">
+          <a id="card-book-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+            class="flex-1 py-3.5 px-5 rounded-2xl bg-charcoal text-ivory font-semibold text-sm text-center shadow-soft hover:opacity-95 transition flex items-center justify-center gap-2">
+            <i data-lucide="calendar-heart" class="w-4 h-4 text-champagne"></i>
+            <span>Book Next 3-Week Fill</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL 1: STAFF 4-DIGIT PIN KEYPAD (For Stamping or Redeeming on Card)   -->
+  <!-- ======================================================================= -->
+  <div id="pin-modal" class="fixed inset-0 bg-charcoal/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-ivory w-full max-w-xs rounded-3xl p-6 shadow-card border border-charcoal/10 text-center">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-[11px] uppercase tracking-widest text-champagne font-semibold">Staff Verification</span>
+        <button onclick="closePinModal()" class="p-1 text-muted hover:text-charcoal">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <h3 id="pin-modal-title" class="font-editorial text-2xl font-semibold text-charcoal">Enter 4-Digit Salon PIN</h3>
+      <p id="pin-modal-subtitle" class="text-xs text-muted mt-1">Default demo PIN is <strong class="font-mono text-charcoal">1234</strong></p>
+
+      <!-- PIN Dots -->
+      <div class="flex justify-center gap-3 my-5" id="pin-dots">
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-charcoal/30 transition-all"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-charcoal/30 transition-all"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-charcoal/30 transition-all"></span>
+        <span class="w-3.5 h-3.5 rounded-full border-2 border-charcoal/30 transition-all"></span>
+      </div>
+      <p id="pin-error-msg" class="text-xs text-rose-600 font-medium h-4 mb-2"></p>
+
+      <!-- Keypad Grid -->
+      <div class="grid grid-cols-3 gap-2.5">
+        <button type="button" onclick="pressPinDigit('1')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">1</button>
+        <button type="button" onclick="pressPinDigit('2')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">2</button>
+        <button type="button" onclick="pressPinDigit('3')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">3</button>
+        <button type="button" onclick="pressPinDigit('4')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">4</button>
+        <button type="button" onclick="pressPinDigit('5')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">5</button>
+        <button type="button" onclick="pressPinDigit('6')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">6</button>
+        <button type="button" onclick="pressPinDigit('7')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">7</button>
+        <button type="button" onclick="pressPinDigit('8')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">8</button>
+        <button type="button" onclick="pressPinDigit('9')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">9</button>
+        <button type="button" onclick="clearPinDigits()" class="py-3 rounded-2xl bg-cream text-xs font-semibold text-muted hover:text-charcoal transition">Clear</button>
+        <button type="button" onclick="pressPinDigit('0')" class="py-3 rounded-2xl bg-white border border-charcoal/10 font-semibold text-lg hover:bg-cream active:scale-95 transition">0</button>
+        <button type="button" onclick="backspacePinDigit()" class="py-3 rounded-2xl bg-cream flex items-center justify-center text-charcoal hover:bg-cream/80 transition">
+          <i data-lucide="delete" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL 2: SALON QR SCANNER (Camera + 1-Click Demo Client Scan Simulator) -->
+  <!-- ======================================================================= -->
+  <div id="scanner-modal" class="fixed inset-0 bg-charcoal/75 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-ivory w-full max-w-md rounded-3xl p-6 shadow-card border border-charcoal/10">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-champagne font-semibold">Checkout Scanner</span>
+          <h3 class="font-editorial text-2xl font-semibold text-charcoal">Scan Client Loyalty QR</h3>
+        </div>
+        <button onclick="closeScannerModal()" class="p-2 rounded-xl bg-cream text-charcoal hover:opacity-80">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Camera Viewport -->
+      <div class="relative w-full aspect-square max-h-64 mx-auto bg-charcoal rounded-2xl overflow-hidden flex items-center justify-center">
+        <video id="scanner-video" class="w-full h-full object-cover hidden" playsinline muted></video>
+        <div id="scanner-placeholder" class="text-center px-6 text-ivory/80 space-y-2">
+          <i data-lucide="camera" class="w-8 h-8 mx-auto text-champagne"></i>
+          <p class="text-xs">Point camera at client's Buffd QR code, or tap a client below to simulate an instant scan.</p>
+        </div>
+        <!-- Viewfinder Frame -->
+        <div class="absolute inset-8 border-2 border-champagne/80 rounded-2xl pointer-events-none">
+          <div class="scanner-line absolute left-2 right-2 h-0.5 bg-champagne shadow-[0_0_8px_#C6A87C]"></div>
+        </div>
+      </div>
+
+      <!-- Instant Simulated Scan List (Great for testing on Laptop/Desktop without pointing a phone) -->
+      <div class="mt-4">
+        <p class="text-[11px] uppercase tracking-wider font-semibold text-muted mb-2">Quick Simulate Scan (+1 Stamp):</p>
+        <div id="scanner-sim-list" class="space-y-2 max-h-40 overflow-y-auto">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL 3: PRINTABLE ACRYLIC DESK STAND PREVIEW                           -->
+  <!-- ======================================================================= -->
+  <div id="print-modal" class="fixed inset-0 bg-charcoal/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-ivory w-full max-w-md rounded-3xl p-6 shadow-card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-editorial text-2xl font-semibold text-charcoal">Acrylic Desk Stand Preview</h3>
+        <button onclick="closePrintStandModal()" class="p-2 rounded-xl bg-cream text-charcoal">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Printable Card Design -->
+      <div id="printable-stand-area" class="bg-ivory border-2 border-champagne/60 rounded-3xl p-7 text-center space-y-4 shadow-soft">
+        <p class="text-[11px] uppercase tracking-[0.25em] text-champagne font-semibold">VIP Loyalty Program</p>
+        <h4 id="print-salon-name" class="font-editorial text-3xl font-bold text-charcoal">Atelier Cuticle Studio</h4>
+        <p class="text-xs text-muted max-w-xs mx-auto leading-relaxed">
+          Scan with your phone camera to unlock your digital loyalty pass & receive <strong class="text-charcoal">Stamp #1</strong> today.
+        </p>
+        <div class="bg-white p-4 rounded-2xl inline-block border border-charcoal/10 shadow-xs">
+          <div id="print-stand-qr"></div>
+        </div>
+        <div class="pt-2 border-t border-charcoal/10">
+          <p class="text-[11px] uppercase tracking-wider text-muted font-semibold">Your Reward</p>
+          <p id="print-reward-text" class="text-sm font-semibold text-charcoal mt-0.5">
+            Free Luxury Paraffin Hand Mask or 20% Off Russian Manicure
+          </p>
+        </div>
+        <p class="text-[10px] text-muted tracking-widest uppercase pt-1">Powered by Buffd</p>
+      </div>
+
+      <div class="mt-5 flex gap-3">
+        <button onclick="window.print()" class="flex-1 py-3 rounded-xl bg-charcoal text-ivory font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition">
+          <i data-lucide="printer" class="w-4 h-4"></i> Print Desk Card
+        </button>
+        <button onclick="closePrintStandModal()" class="px-4 py-3 rounded-xl bg-cream text-charcoal font-semibold text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- APPLICATION LOGIC, DATABASE SCHEMA & REAL-TIME SYNC                     -->
+  <!-- ======================================================================= -->
+  <script>
+    /**
+     * 1. DATABASE SCHEMA & SEED DATA (localStorage + BroadcastChannel for Live Sync)
+     */
+    const STORAGE_KEY = 'buffd_app_db_v1';
+    const syncChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('buffd_live_sync') : null;
+
+    function formatISO(daysOffset = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + daysOffset);
+      return d.toISOString().split('T')[0];
+    }
+
+    const DEFAULT_DB = {
+      adminLoggedIn: true,
+      salons: {
+        'atelier-cuticle': {
+          id: 'atelier-cuticle',
+          name: 'Atelier Cuticle Studio',
+          accentColor: '#7A8F7E',
+          targetStamps: 6,
+          rewardTitle: 'Free Luxury Paraffin Hand Mask or 20% Off Russian Manicure',
+          staffPin: '1234',
+          bookingUrl: 'https://instagram.com'
+        }
+      },
+      clients: [
+        {
+          slug: 'camille-4821',
+          salonId: 'atelier-cuticle',
+          name: 'Camille Santos',
+          stamps: 5,
+          lifetimeVisits: 5,
+          lastVisit: formatISO(-18),
+          createdAt: formatISO(-110)
+        },
+        {
+          slug: 'sofia-9104',
+          salonId: 'atelier-cuticle',
+          name: 'Sofia Reyes',
+          stamps: 6,
+          lifetimeVisits: 6,
+          lastVisit: formatISO(-3),
+          createdAt: formatISO(-140)
+        },
+        {
+          slug: 'bianca-3319',
+          salonId: 'atelier-cuticle',
+          name: 'Bianca Mendoza',
+          stamps: 2,
+          lifetimeVisits: 2,
+          lastVisit: formatISO(-7),
+          createdAt: formatISO(-30)
+        }
+      ],
+      stamp_history: [
+        { id: 'h1', clientSlug: 'camille-4821', salonId: 'atelier-cuticle', date: formatISO(-18), action: 'Stamp #5 Added' },
+        { id: 'h2', clientSlug: 'sofia-9104', salonId: 'atelier-cuticle', date: formatISO(-3), action: 'Stamp #6 Added (Reward Unlocked)' },
+        { id: 'h3', clientSlug: 'bianca-3319', salonId: 'atelier-cuticle', date: formatISO(-7), action: 'Stamp #2 Added' }
+      ]
+    };
+
+    let appState = loadDB();
+    let currentRoute = 'admin';
+    let activeSalonId = 'atelier-cuticle';
+    let activeClientSlug = 'camille-4821';
+    let lastAnimatedStampIndex = null;
+
+    function loadDB() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DB));
+          return JSON.parse(JSON.stringify(DEFAULT_DB));
+        }
+        return JSON.parse(raw);
+      } catch (e) {
+        return JSON.parse(JSON.stringify(DEFAULT_DB));
+      }
+    }
+
+    function saveDB(triggerBroadcast = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        if (triggerBroadcast && syncChannel) {
+          syncChannel.postMessage({ type: 'DB_UPDATED', timestamp: Date.now() });
+        }
+      } catch (e) {
+        console.error('Storage error:', e);
+      }
+    }
+
+    // Listen for live updates across browser tabs/windows
+    window.addEventListener('storage', (e) => {
+      if (e.key === STORAGE_KEY) {
+        appState = loadDB();
+        renderAllViews();
+      }
+    });
+    if (syncChannel) {
+      syncChannel.onmessage = () => {
+        appState = loadDB();
+        renderAllViews();
+      };
+    }
+
+    /**
+     * 2. HELPER UTILITIES (Dates, Slugs, Toasts, Confetti)
+     */
+    function formatReadableDate(isoStr) {
+      if (!isoStr) return '—';
+      const [y, m, d] = isoStr.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    function addDaysISO(isoStr, days) {
+      const [y, m, d] = isoStr.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      dateObj.setDate(dateObj.getDate() + days);
+      const yyyy = dateObj.getFullYear();
+      const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const dd = String(dateObj.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function generateClientSlug(fullName) {
+      const first = fullName.trim().toLowerCase().split(/\s+/)[0].replace(/[^a-z0-9]/g, '') || 'vip';
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      return `${first}-${rand}`;
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'error' ? 'bg-rose-900 text-white' : 'bg-charcoal text-ivory';
+      toast.className = `${bg} px-4 py-3 rounded-2xl shadow-card text-xs sm:text-sm font-medium flex items-center gap-2 border border-white/10 transition-all duration-300 transform translate-y-0 opacity-100`;
+      toast.innerHTML = `<span class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-rose-400' : 'bg-champagne'}"></span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-8px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function triggerCelebration() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 55,
+          spread: 65,
+          origin: { y: 0.65 },
+          colors: ['#7A8F7E', '#C6A87C', '#1E1E1C', '#FAF7F2']
+        });
+      }
+    }
+
+    function applySalonTheme(salon) {
+      document.documentElement.style.setProperty('--accent-primary', salon.accentColor || '#7A8F7E');
+    }
+
+    /**
+     * 3. ROUTING & VIEW NAVIGATION
+     */
+    function switchRoute(routeName, clientSlug = null) {
+      currentRoute = routeName;
+      if (clientSlug) {
+        activeClientSlug = clientSlug;
+      }
+
+      // Toggle sections
+      document.getElementById('view-admin').classList.toggle('hidden', routeName !== 'admin');
+      document.getElementById('view-join').classList.toggle('hidden', routeName !== 'join');
+      document.getElementById('view-card').classList.toggle('hidden', routeName !== 'card');
+
+      // Update top nav active state
+      document.querySelectorAll('.route-tab').forEach(btn => {
+        btn.classList.remove('bg-ivory', 'text-charcoal', 'shadow-xs');
+        btn.classList.add('text-ivory/75', 'hover:text-ivory');
+      });
+      const activeBtn = document.getElementById(`nav-${routeName}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-ivory', 'text-charcoal', 'shadow-xs');
+        activeBtn.classList.remove('text-ivory/75', 'hover:text-ivory');
+      }
+
+      // Sync URL hash for shareable feel
+      if (routeName === 'admin') {
+        history.replaceState(null, '', '#admin');
+      } else if (routeName === 'join') {
+        history.replaceState(null, '', `#join/${activeSalonId}`);
+      } else if (routeName === 'card') {
+        history.replaceState(null, '', `#card/${activeClientSlug}`);
+      }
+
+      renderAllViews();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectClientFromDropdown(slug) {
+      activeClientSlug = slug;
+      switchRoute('card', slug);
+    }
+
+    /**
+     * 4. SALON ADMIN VIEW LOGIC
+     */
+    function toggleAdminAuth(loggedIn) {
+      appState.adminLoggedIn = loggedIn;
+      saveDB();
+      renderAdminView();
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      toggleAdminAuth(true);
+      showToast('Signed in to Atelier Cuticle Studio');
+    }
+
+    function selectAccentSwatch(hex) {
+      document.querySelectorAll('.swatch-btn').forEach(btn => {
+        if (btn.dataset.color === hex) {
+          btn.classList.add('ring-2', 'ring-offset-2', 'ring-charcoal');
+        } else {
+          btn.classList.remove('ring-2', 'ring-offset-2', 'ring-charcoal');
+        }
+      });
+      const salon = appState.salons[activeSalonId];
+      salon.accentColor = hex;
+      applySalonTheme(salon);
+    }
+
+    function saveSalonSettings(e) {
+      e.preventDefault();
+      const salon = appState.salons[activeSalonId];
+      salon.name = document.getElementById('set-salon-name').value.trim();
+      salon.targetStamps = Math.min(12, Math.max(4, parseInt(document.getElementById('set-target-stamps').value, 10) || 6));
+      salon.staffPin = document.getElementById('set-staff-pin').value.trim();
+      salon.rewardTitle = document.getElementById('set-reward-title').value.trim();
+      salon.bookingUrl = document.getElementById('set-booking-url').value.trim();
+
+      saveDB();
+      renderAllViews();
+      showToast('Studio settings saved & synced live!');
+    }
+
+    function renderAdminView() {
+      const authBox = document.getElementById('admin-auth-box');
+      const workspace = document.getElementById('admin-workspace');
+
+      if (!appState.adminLoggedIn) {
+        authBox.classList.remove('hidden');
+        workspace.classList.add('hidden');
+        return;
+      }
+
+      authBox.classList.add('hidden');
+      workspace.classList.remove('hidden');
+
+      const salon = appState.salons[activeSalonId];
+      applySalonTheme(salon);
+
+      // Populate Header & Form
+      const initials = salon.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      document.getElementById('admin-salon-badge').textContent = initials || 'BF';
+      document.getElementById('admin-salon-title').textContent = salon.name;
+      document.getElementById('admin-display-pin').textContent = salon.staffPin;
+      document.getElementById('admin-display-target').textContent = salon.targetStamps;
+
+      document.getElementById('set-salon-name').value = salon.name;
+      document.getElementById('set-target-stamps').value = salon.targetStamps;
+      document.getElementById('set-staff-pin').value = salon.staffPin;
+      document.getElementById('set-reward-title').value = salon.rewardTitle;
+      document.getElementById('set-booking-url').value = salon.bookingUrl;
+
+      document.querySelectorAll('.swatch-btn').forEach(btn => {
+        btn.classList.toggle('ring-2', btn.dataset.color === salon.accentColor);
+        btn.classList.toggle('ring-offset-2', btn.dataset.color === salon.accentColor);
+        btn.classList.toggle('ring-charcoal', btn.dataset.color === salon.accentColor);
+      });
+
+      // KPI Stats
+      const salonClients = appState.clients.filter(c => c.salonId === activeSalonId);
+      const totalStamps = salonClients.reduce((sum, c) => sum + c.lifetimeVisits, 0);
+      const rewardsReady = salonClients.filter(c => c.stamps >= salon.targetStamps).length;
+
+      document.getElementById('stat-total-clients').textContent = salonClients.length;
+      document.getElementById('stat-total-stamps').textContent = totalStamps;
+      document.getElementById('stat-rewards-ready').textContent = rewardsReady;
+
+      // Render Salon Join QR
+      const qrContainer = document.getElementById('admin-salon-qr');
+      qrContainer.innerHTML = '';
+      const joinUrl = `${window.location.origin}${window.location.pathname}#join/${salon.id}`;
+      new QRCode(qrContainer, {
+        text: joinUrl,
+        width: 136,
+        height: 136,
+        colorDark: '#1E1E1C',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      renderClientDirectory();
+    }
+
+    function renderClientDirectory() {
+      const salon = appState.salons[activeSalonId];
+      const query = (document.getElementById('client-search-input').value || '').toLowerCase().trim();
+      const listEl = document.getElementById('admin-client-list');
+
+      const filtered = appState.clients.filter(c =>
+        c.salonId === activeSalonId &&
+        (c.name.toLowerCase().includes(query) || c.slug.toLowerCase().includes(query))
+      );
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="text-center py-8 text-sm text-muted">No clients found. Share your Salon Join QR at checkout!</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(client => {
+        const isUnlocked = client.stamps >= salon.targetStamps;
+        const nextFill = addDaysISO(client.lastVisit, 21);
+
+        return `
+          <div class="bg-white rounded-2xl p-4 border ${isUnlocked ? 'border-champagne ring-1 ring-champagne/40' : 'border-charcoal/10'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="font-semibold text-charcoal text-base">${client.name}</h3>
+                <span class="text-[11px] font-mono text-muted bg-cream px-2 py-0.5 rounded-md">${client.slug}</span>
+                ${isUnlocked ? `<span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-champagne/25 text-charcoal">Reward Ready</span>` : ''}
+              </div>
+              <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+                <span>Stamps: <strong class="text-charcoal">${client.stamps} / ${salon.targetStamps}</strong></span>
+                <span>Last: <strong class="text-charcoal">${formatReadableDate(client.lastVisit)}</strong></span>
+                <span>Next Fill: <strong class="text-accent">${formatReadableDate(nextFill)}</strong></span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              ${isUnlocked ? `
+                <button onclick="redeemClientReward('${client.slug}')" class="px-3 py-2 rounded-xl bg-champagne text-charcoal font-semibold text-xs hover:opacity-90 transition">
+                  Redeem & Reset
+                </button>
+              ` : `
+                <button onclick="addStampToClient('${client.slug}')" class="px-3.5 py-2 rounded-xl bg-accent text-white font-semibold text-xs hover:opacity-95 active:scale-95 transition">
+                  +1 Stamp
+                </button>
+              `}
+              <button onclick="switchRoute('card', '${client.slug}')" class="px-3 py-2 rounded-xl bg-cream text-charcoal font-semibold text-xs hover:bg-charcoal hover:text-ivory transition">
+                View Card
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function copyJoinLink() {
+      const joinUrl = `${window.location.origin}${window.location.pathname}#join/${activeSalonId}`;
+      const temp = document.createElement('input');
+      temp.value = joinUrl;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      showToast('Salon Join QR link copied to clipboard!');
+    }
+
+    /**
+     * 5. STAMPING & REWARD ENGINE (Shared across Admin & Card PIN flows)
+     */
+    function addStampToClient(slug, customDate = null) {
+      const client = appState.clients.find(c => c.slug === slug);
+      if (!client) return;
+      const salon = appState.salons[client.salonId];
+      const visitDate = customDate || formatISO(0);
+
+      client.lifetimeVisits += 1;
+      client.lastVisit = visitDate;
+
+      if (client.stamps < salon.targetStamps) {
+        client.stamps += 1;
+        lastAnimatedStampIndex = client.stamps - 1;
+      } else {
+        // Already full, still log lifetime visit
+        lastAnimatedStampIndex = salon.targetStamps - 1;
+      }
+
+      const unlocked = client.stamps >= salon.targetStamps;
+      appState.stamp_history.unshift({
+        id: 'h-' + Date.now(),
+        clientSlug: client.slug,
+        salonId: salon.id,
+        date: visitDate,
+        action: unlocked
+          ? `Stamp #${client.stamps} Added (Reward Unlocked!)`
+          : `Stamp #${client.stamps} Added`
+      });
+
+      saveDB();
+      renderAllViews();
+
+      if (unlocked) {
+        triggerCelebration();
+        showToast(`${client.name} unlocked their reward!`);
+      } else {
+        showToast(`+1 Stamp added for ${client.name} (${client.stamps}/${salon.targetStamps})`);
+      }
+    }
+
+    function redeemClientReward(slug) {
+      const client = appState.clients.find(c => c.slug === slug);
+      if (!client) return;
+      const salon = appState.salons[client.salonId];
+
+      client.stamps = 0;
+      lastAnimatedStampIndex = null;
+
+      appState.stamp_history.unshift({
+        id: 'h-' + Date.now(),
+        clientSlug: client.slug,
+        salonId: salon.id,
+        date: formatISO(0),
+        action: `Reward Redeemed (${salon.rewardTitle}) — Card Reset`
+      });
+
+      saveDB();
+      renderAllViews();
+      triggerCelebration();
+      showToast(`Reward redeemed for ${client.name}! Card reset to 0.`);
+    }
+
+    /**
+     * 6. QUICK CLIENT REGISTRATION VIEW (/join/[salon_id])
+     */
+    function renderJoinView() {
+      const salon = appState.salons[activeSalonId];
+      applySalonTheme(salon);
+
+      document.getElementById('join-salon-name').textContent = salon.name;
+      document.getElementById('join-target-count').textContent = salon.targetStamps;
+      document.getElementById('join-reward-preview').textContent = salon.rewardTitle;
+
+      const dateInput = document.getElementById('join-appointment-date');
+      if (!dateInput.value) {
+        dateInput.value = formatISO(0);
+      }
+    }
+
+    function handleQuickRegister(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('join-client-name');
+      const dateInput = document.getElementById('join-appointment-date');
+
+      const fullName = nameInput.value.trim();
+      const apptDate = dateInput.value || formatISO(0);
+      if (!fullName) return;
+
+      const slug = generateClientSlug(fullName);
+      const newClient = {
+        slug,
+        salonId: activeSalonId,
+        name: fullName,
+        stamps: 1,
+        lifetimeVisits: 1,
+        lastVisit: apptDate,
+        createdAt: apptDate
+      };
+
+      appState.clients.unshift(newClient);
+      appState.stamp_history.unshift({
+        id: 'h-' + Date.now(),
+        clientSlug: slug,
+        salonId: activeSalonId,
+        date: apptDate,
+        action: 'Joined VIP Loyalty & Earned Stamp #1'
+      });
+
+      lastAnimatedStampIndex = 0;
+      saveDB();
+
+      // Clear form for next client
+      nameInput.value = '';
+      dateInput.value = formatISO(0);
+
+      // Redirect immediately to client's personal loyalty card
+      switchRoute('card', slug);
+      triggerCelebration();
+      showToast(`Welcome ${fullName}! Stamp #1 awarded.`);
+    }
+
+    /**
+     * 7. CLIENT DIGITAL LOYALTY CARD VIEW (/card/[unique_client_slug])
+     */
+    function renderCardView() {
+      let client = appState.clients.find(c => c.slug === activeClientSlug);
+      if (!client && appState.clients.length > 0) {
+        client = appState.clients[0];
+        activeClientSlug = client.slug;
+      }
+      if (!client) return;
+
+      const salon = appState.salons[client.salonId] || appState.salons[activeSalonId];
+      applySalonTheme(salon);
+
+      const isUnlocked = client.stamps >= salon.targetStamps;
+      const nextFillDate = addDaysISO(client.lastVisit, 21);
+
+      document.getElementById('card-salon-name').textContent = salon.name;
+      document.getElementById('card-slug-badge').textContent = `#${client.slug}`;
+      document.getElementById('card-client-greeting').textContent = `Hi, ${client.name}`;
+      document.getElementById('card-progress-text').textContent = `${client.stamps} / ${salon.targetStamps} Stamps`;
+      document.getElementById('card-lifetime-visits').textContent = `Lifetime Visits: ${client.lifetimeVisits}`;
+      document.getElementById('card-reward-title').textContent = salon.rewardTitle;
+      document.getElementById('card-last-visit').textContent = formatReadableDate(client.lastVisit);
+      document.getElementById('card-next-fill').textContent = formatReadableDate(nextFillDate);
+      document.getElementById('client-qr-caption').textContent = `ID: ${client.slug}`;
+      document.getElementById('card-book-btn').href = salon.bookingUrl || 'https://instagram.com';
+
+      // Reward Unlocked Banner
+      document.getElementById('reward-unlocked-banner').classList.toggle('hidden', !isUnlocked);
+
+      // Visual Stamp Grid
+      const gridEl = document.getElementById('card-stamp-grid');
+      let stampsHTML = '';
+      for (let i = 0; i < salon.targetStamps; i++) {
+        const earned = i < client.stamps;
+        const isRewardSlot = i === salon.targetStamps - 1;
+        const animateClass = (earned && i === lastAnimatedStampIndex) ? 'animate-stamp-pop' : '';
+
+        if (earned) {
+          stampsHTML += `
+            <div class="aspect-square rounded-2xl bg-accent text-white flex flex-col items-center justify-center shadow-soft relative ${animateClass}">
+              <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L14.8 9.2L22 12L14.8 14.8L12 22L9.2 14.8L2 12L9.2 9.2L12 2Z"/>
+              </svg>
+              <span class="text-[10px] font-semibold tracking-wider uppercase mt-1 text-white/90">Visit ${i + 1}</span>
+            </div>
+          `;
+        } else {
+          stampsHTML += `
+            <div class="aspect-square rounded-2xl bg-white border border-dashed ${isRewardSlot ? 'border-champagne bg-champagne/5' : 'border-charcoal/20'} flex flex-col items-center justify-center text-muted/60">
+              ${isRewardSlot
+                ? `<i data-lucide="gift" class="w-5 h-5 text-champagne"></i><span class="text-[10px] font-bold uppercase tracking-wider text-champagne mt-1">Reward</span>`
+                : `<span class="font-editorial text-xl font-semibold text-charcoal/30">${i + 1}</span>`
+              }
+            </div>
+          `;
+        }
+      }
+      gridEl.innerHTML = stampsHTML;
+      lastAnimatedStampIndex = null;
+
+      // Render Personal Client QR Code
+      const clientQrEl = document.getElementById('client-personal-qr');
+      clientQrEl.innerHTML = '';
+      new QRCode(clientQrEl, {
+        text: `buffd://stamp/${client.slug}`,
+        width: 128,
+        height: 128,
+        colorDark: '#1E1E1C',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      // Populate Visit History
+      const historyList = document.getElementById('client-history-list');
+      const logs = appState.stamp_history.filter(h => h.clientSlug === client.slug);
+      historyList.innerHTML = logs.length
+        ? logs.map(l => `
+            <div class="flex items-center justify-between py-1 border-b border-charcoal/5 last:border-0">
+              <span class="text-charcoal font-medium">${l.action}</span>
+              <span class="text-muted text-[11px]">${formatReadableDate(l.date)}</span>
+            </div>
+          `).join('')
+        : `<p class="text-muted">No visits recorded yet.</p>`;
+    }
+
+    function dismissA2HS() {
+      document.getElementById('a2hs-banner').classList.add('hidden');
+    }
+
+    function toggleHistoryDrawer() {
+      document.getElementById('client-history-drawer').classList.toggle('hidden');
+    }
+
+    /**
+     * 8. STAFF 4-DIGIT PIN MODAL LOGIC
+     */
+    let enteredPin = '';
+    let pinActionMode = 'stamp'; // 'stamp' or 'redeem'
+
+    function openPinModal(mode = 'stamp') {
+      pinActionMode = mode;
+      enteredPin = '';
+      updatePinDots();
+      document.getElementById('pin-error-msg').textContent = '';
+      document.getElementById('pin-modal-title').textContent =
+        mode === 'redeem' ? 'PIN to Redeem Reward' : 'Enter 4-Digit Salon PIN';
+      const modal = document.getElementById('pin-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closePinModal() {
+      const modal = document.getElementById('pin-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function updatePinDots() {
+      const dots = document.querySelectorAll('#pin-dots span');
+      dots.forEach((dot, idx) => {
+        if (idx < enteredPin.length) {
+          dot.classList.add('bg-charcoal', 'border-charcoal', 'scale-110');
+          dot.classList.remove('border-charcoal/30');
+        } else {
+          dot.classList.remove('bg-charcoal', 'border-charcoal', 'scale-110');
+          dot.classList.add('border-charcoal/30');
+        }
+      });
+    }
+
+    function pressPinDigit(digit) {
+      if (enteredPin.length >= 4) return;
+      enteredPin += digit;
+      updatePinDots();
+
+      if (enteredPin.length === 4) {
+        const salon = appState.salons[activeSalonId];
+        if (enteredPin === salon.staffPin) {
+          closePinModal();
+          if (pinActionMode === 'redeem') {
+            redeemClientReward(activeClientSlug);
+          } else {
+            addStampToClient(activeClientSlug);
+          }
+        } else {
+          document.getElementById('pin-error-msg').textContent = 'Incorrect PIN. Please try again.';
+          setTimeout(() => {
+            enteredPin = '';
+            updatePinDots();
+          }, 450);
+        }
+      }
+    }
+
+    function backspacePinDigit() {
+      enteredPin = enteredPin.slice(0, -1);
+      updatePinDots();
+    }
+
+    function clearPinDigits() {
+      enteredPin = '';
+      updatePinDots();
+    }
+
+    /**
+     * 9. SCANNER & PRINT STAND MODALS
+     */
+    let activeMediaStream = null;
+
+    async function openScannerModal() {
+      const modal = document.getElementById('scanner-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // Populate quick simulate buttons
+      const simList = document.getElementById('scanner-sim-list');
+      const salon = appState.salons[activeSalonId];
+      simList.innerHTML = appState.clients.map(c => `
+        <button onclick="simulateScanSuccess('${c.slug}')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white border border-charcoal/10 hover:border-charcoal text-left transition">
+          <div>
+            <p class="text-xs font-semibold text-charcoal">${c.name}</p>
+            <p class="text-[11px] font-mono text-muted">${c.slug} &bull; ${c.stamps}/${salon.targetStamps} stamps</p>
+          </div>
+          <span class="text-xs font-semibold text-accent">+1 Stamp</span>
+        </button>
+      `).join('');
+
+      // Try opening device camera gracefully
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          activeMediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+          const video = document.getElementById('scanner-video');
+          video.srcObject = activeMediaStream;
+          video.classList.remove('hidden');
+          document.getElementById('scanner-placeholder').classList.add('hidden');
+          await video.play();
+        }
+      } catch (err) {
+        // Fallback remains cleanly displayed if camera permission is blocked/unavailable
+      }
+    }
+
+    function closeScannerModal() {
+      if (activeMediaStream) {
+        activeMediaStream.getTracks().forEach(track => track.stop());
+        activeMediaStream = null;
+      }
+      const video = document.getElementById('scanner-video');
+      video.classList.add('hidden');
+      document.getElementById('scanner-placeholder').classList.remove('hidden');
+
+      const modal = document.getElementById('scanner-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function simulateScanSuccess(slug) {
+      closeScannerModal();
+      addStampToClient(slug);
+    }
+
+    function openPrintStandModal() {
+      const salon = appState.salons[activeSalonId];
+      document.getElementById('print-salon-name').textContent = salon.name;
+      document.getElementById('print-reward-text').textContent = salon.rewardTitle;
+
+      const qrBox = document.getElementById('print-stand-qr');
+      qrBox.innerHTML = '';
+      const joinUrl = `${window.location.origin}${window.location.pathname}#join/${salon.id}`;
+      new QRCode(qrBox, {
+        text: joinUrl,
+        width: 165,
+        height: 165,
+        colorDark: '#1E1E1C',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const modal = document.getElementById('print-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closePrintStandModal() {
+      const modal = document.getElementById('print-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    /**
+     * 10. GLOBAL RENDER & INITIALIZATION
+     */
+    function syncClientDropdown() {
+      const select = document.getElementById('quick-client-select');
+      select.innerHTML = appState.clients.map(c =>
+        `<option value="${c.slug}" ${c.slug === activeClientSlug ? 'selected' : ''}>Card: ${c.name}</option>`
+      ).join('');
+    }
+
+    function renderAllViews() {
+      syncClientDropdown();
+      renderAdminView();
+      renderJoinView();
+      renderCardView();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Parse URL hash if present (#admin, #join/atelier-cuticle, #card/camille-4821)
+      const hash = window.location.hash.replace('#', '');
+      if (hash.startsWith('join')) {
+        switchRoute('join');
+      } else if (hash.startsWith('card/')) {
+        const slug = hash.split('/')[1];
+        switchRoute('card', slug || activeClientSlug);
+      } else {
+        switchRoute('admin');
+      }
+    });
+  </script>
+</body>
+</html>
